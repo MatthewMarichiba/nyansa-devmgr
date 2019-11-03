@@ -66,7 +66,7 @@ class Devices {
     this.devices = cloneDeep(deviceInitState);
     setInterval(() => {
       const plusMinus = () => 0.8 + (Math.random() * 0.4); // Coefficient to vary values between 80% & 120%
-      this.devices.map((dev, index) => {
+      this.devices.forEach((dev, index) => {
         const initialValues = deviceInitState[index];
         dev.cpuPct = Math.min(initialValues.cpuPct * plusMinus(), 100);
         dev.memBytes = initialValues.memBytes * plusMinus();

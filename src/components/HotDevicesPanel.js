@@ -16,7 +16,6 @@ class HotDevicesPanel extends React.Component {
             columns: props.columns,
             openChangeOwnerModal: props.openChangeOwnerModal
         });
-        renderDeviceRows: this.renderDeviceRows.bind(this);
     }
 
     renderDeviceRows() {
@@ -49,17 +48,10 @@ class HotDevicesPanel extends React.Component {
             <div className={'HotDevicesPanel col-sm-' + gridSize}>
                 <div className="panel panel-default panel-info">
                      <div className="panel-heading">
-                         <h3 className="panel-title">{this.attributeLabel}</h3>
+                         <h3 className="panel-title">{this.attributeLabel} &mdash; Top {this.cutoff} Devices</h3>
                      </div>
                     <div className="panel-body">
                         <table className="table table-condensed table-hover">
-                            {/*<thead>*/}
-                            {/*<tr>*/}
-                            {/*    <th className="col-md-2">IP</th>*/}
-                            {/*    <th className="col-md-2">Owner</th>*/}
-                            {/*    <th className="col-md-2">{this.attributeLabel}</th>*/}
-                            {/*</tr>*/}
-                            {/*</thead>*/}
                             <tbody>
                                 { this.renderDeviceRows() }
                             </tbody>

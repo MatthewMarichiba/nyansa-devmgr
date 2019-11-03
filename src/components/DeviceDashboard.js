@@ -1,8 +1,8 @@
 import React from 'react';
-import $ from 'jquery';
 import { find } from 'lodash';
 import Formatting from '../shared/Formatting';
 import HotDevicesPanel from "./HotDevicesPanel";
+import './DeviceDashboard.scss';
 
 const hotPanelCutoff = 5;
 const panelColumns = 4;
@@ -12,7 +12,7 @@ class DeviceDashboard extends React.Component {
         super(props);
         this.devicesService = props.devicesService;
         this.state = {
-            devices: props.devicesService.all(),
+            devices: this.devicesService.all(),
             selectedDevice: {},
         };
         // Poll for new device data periodically
@@ -20,31 +20,17 @@ class DeviceDashboard extends React.Component {
             this.setState({ devices: props.devicesService.all() });
         }, 3000);
 
-        this.renderDeviceRows = this.renderDeviceRows.bind(this);
         this.openChangeOwnerModal = this.openChangeOwnerModal.bind(this);
     }
 
-    renderDeviceRows() {
-        return this.state.devices.map(device => (
-            <React.Fragment key={device.ip}>
-                <tr>
-                    <td>{device.ip}</td>
-                    <td>{device.owner}</td>
-                    <td>{Formatting.percent(device.cpuPct)}</td>
-                    <td>{Formatting.bytesToStr(device.memBytes, 2)}</td>
-                    <td>{Formatting.bytesToStr(device.networkRxBytes, 2)}</td>
-                    <td>{Formatting.bytesToStr(device.networkTxBytes, 2)}</td>
-                </tr>
-            </React.Fragment>
-        ));
-    }
-
     openChangeOwnerModal(ip) {
-        console.log(ip);
         const device = find(this.state.devices, { ip });
         this.setState({
             selectedDevice: device,
         });
+        // TODO: Below isn't bootstrap's recommended way to show/hide Modals.
+        //  They suggest this form: $('#modalId').modal('show')
+        //  I was having problems with bootstrap/jquery/react integration. For expediency, I'm leaving it for now.
         document.querySelector('#changeOwnerModal').style.display = "block";
         document.querySelector('#newOwnerName').value = device.owner;
     }
@@ -55,6 +41,25 @@ class DeviceDashboard extends React.Component {
         document.querySelector('#changeOwnerModal').style.display = "none";
         const newName = document.querySelector('#newOwnerName').value;
         this.devicesService.updateDevice(this.state.selectedDevice.ip, { owner: newName });
+        this.setState({ devices: this.devicesService.all() });
+    }
+
+    renderDeviceRows() {
+        return this.state.devices.map(device => (
+            <React.Fragment key={device.ip}>
+                <tr>
+                    <td>{device.ip}</td>
+                    <td className="owner" onClick={() => this.openChangeOwnerModal(device.ip)}>
+                        {device.owner}
+                        <span className="show-on-hover glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    </td>
+                    <td>{Formatting.percent(device.cpuPct)}</td>
+                    <td>{Formatting.bytesToStr(device.memBytes, 2)}</td>
+                    <td>{Formatting.bytesToStr(device.networkRxBytes, 2)}</td>
+                    <td>{Formatting.bytesToStr(device.networkTxBytes, 2)}</td>
+                </tr>
+            </React.Fragment>
+        ));
     }
 
     render() {
@@ -100,7 +105,7 @@ class DeviceDashboard extends React.Component {
                     </div>
                 </div>
                 <h4>All Devices</h4>
-                <table className="table table-bordered table-condensed table-striped table-hover">
+                <table className="table table-bordered table-condensed table-striped table-hover DevicesDashboard__table">
                     <thead>
                         <tr>
                             <th className="col-md-2">IP</th>
