@@ -1,0 +1,18 @@
+.HotDevicesPanel {
+  padding: 0px 10px 0px 0px;
+  .panel-body {
+    padding: 0px; // Make table fit flush inside the panel
+  }
+}
+
+// Show pencil icon when hovering on owner field
+.HotDevicesPanel__owner {
+  cursor: default;
+}
+.HotDevicesPanel__owner .show-on-hover {
+  display: none;
+  float: right;
+}
+.HotDevicesPanel__owner:hover .show-on-hover {
+  display: inline;
+}
