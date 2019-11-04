@@ -28,11 +28,11 @@ class DeviceDashboard extends React.Component {
         this.setState({
             selectedDevice: device,
         });
+        document.querySelector('#newOwnerName').value = device.owner;
         // TODO: Below isn't bootstrap's recommended way to show/hide Modals.
         //  They suggest this form: $('#modalId').modal('show')
-        //  I was having problems with bootstrap/jquery/react integration. For expediency, I'm leaving it for now.
+        //  I had some glitches with bootstrap/jquery/react integration. For expediency, I'm leaving it for now.
         document.querySelector('#changeOwnerModal').style.display = "block";
-        document.querySelector('#newOwnerName').value = device.owner;
     }
     cancelChangeOwnerModal() {
         document.querySelector('#changeOwnerModal').style.display = "none";
@@ -70,7 +70,7 @@ class DeviceDashboard extends React.Component {
             openChangeOwnerModal: this.openChangeOwnerModal
         };
         return (
-            <div className="DeviceDashboard">,
+            <div className="DeviceDashboard">
                 <h4>Hot Devices</h4>
                 <div className="container">
                     <div className="row">
