@@ -46,7 +46,7 @@ const deviceInitState = [
     owner: 'Judith Mcintosh',
     cpuPct: 50,
     memBytes: 3 * 1024 * 1024 * 1024,
-    networkRxBytes: 40 * 1024 * 1024,
+    networkRxBytes: 70 * 1024 * 1024,
     networkTxBytes: 65 * 1024 * 1024
   },
   {
@@ -55,7 +55,7 @@ const deviceInitState = [
     cpuPct: 70,
     memBytes: 70 * 1024 * 1024 * 1024,
     networkRxBytes: 30 * 1024 * 1024,
-    networkTxBytes: 20 * 1024 * 1024
+    networkTxBytes: 10 * 1024 * 1024
   }
 ];
 

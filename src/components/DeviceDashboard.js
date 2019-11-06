@@ -2,6 +2,8 @@ import React from 'react';
 import { find } from 'lodash';
 import Formatting from '../shared/Formatting';
 import HotDevicesPanel from "./HotDevicesPanel";
+import HealthChart from "./HealthChart";
+import CpuTraceChart from "./CpuTraceChart";
 import './DeviceDashboard.scss';
 
 const hotPanelCutoff = 5;
@@ -18,7 +20,7 @@ class DeviceDashboard extends React.Component {
         // Poll for new device data periodically
         setInterval(() => {
             this.setState({ devices: props.devicesService.all() });
-        }, 3000);
+        }, 1500);
 
         this.openChangeOwnerModal = this.openChangeOwnerModal.bind(this);
     }
@@ -102,6 +104,10 @@ class DeviceDashboard extends React.Component {
                             attributeFormatter={Formatting.bytesToStr}
                             threshold={70 * 1024 * 1024 /* 70MB */}
                         ></HotDevicesPanel>
+                    </div>
+                    <div className="row">
+                        <HealthChart devices={this.state.devices}></HealthChart>
+                        <CpuTraceChart devices={this.state.devices}></CpuTraceChart>
                     </div>
                 </div>
                 <h4>All Devices</h4>
