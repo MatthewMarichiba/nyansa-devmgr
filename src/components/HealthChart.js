@@ -34,7 +34,6 @@ class HealthChart extends React.Component {
                 {
                     domain: { x: [0, 1], y: [0, 1] },
                     value,
-                    title: { text: "System Health (Tx/Rx)" },
                     type: "indicator",
                     mode: "gauge+number",
                     gauge: {
@@ -55,10 +54,16 @@ class HealthChart extends React.Component {
                 },
             ];
 
+        const layout = {
+            title: 'System Health (Tx/Rx)',
+            width: 300,
+            height: 300,
+        };
+
         return (
             <Plot
                 data={data}
-                layout={{ width: 300, height: 300, margin: { t: 0, b: 0 } }}
+                layout={layout}
             />
         );
     }

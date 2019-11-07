@@ -1,4 +1,6 @@
-import { find, cloneDeep } from 'lodash';
+import {find, findIndex, cloneDeep, sortBy} from 'lodash';
+
+const traceDepth = 20;
 
 const deviceInitState = [
   {
@@ -59,21 +61,40 @@ const deviceInitState = [
   }
 ];
 
+const metrics = ['cpuPct', 'memBytes', 'networkTxBytes', 'networkRxBytes'];
+
 class Devices {
   constructor() {
-    // todo: hook this up to a db. ideally with the stats constantly changing.
-    //   For now, let's fake a little activity.
     this.devices = cloneDeep(deviceInitState);
+
+    // Initialize metrics traces to store history of values
+    this.devices.forEach(dev => {
+      dev.traces = {};
+      metrics.forEach(metric => dev.traces[metric] = [0])
+    });
+
+    // Refresh device data periodically
+    // TODO: hook this up to a db. ideally with the stats constantly changing.
+    //   For now, let's fake a little activity.
     setInterval(() => {
-      const plusMinus = () => 0.8 + (Math.random() * 0.4); // Coefficient to vary values between 80% & 120%
       this.devices.forEach((dev, index) => {
+        // mock updated device values, which should typically come from an API
+        const plusMinus = () => 0.8 + (Math.random() * 0.4); // Coefficient to vary values between 80% & 120%
         const initialValues = deviceInitState[index];
         dev.cpuPct = Math.min(initialValues.cpuPct * plusMinus(), 100);
         dev.memBytes = initialValues.memBytes * plusMinus();
         dev.networkTxBytes = initialValues.networkTxBytes * plusMinus();
         dev.networkRxBytes = initialValues.networkRxBytes * plusMinus();
+
+        // Store current device's metrics into traces arrays
+        metrics.forEach(metric => {
+          dev.traces[metric].push(dev[metric]); // Append the current value to the trace array
+          if (dev.traces[metric].length > traceDepth) { // If the array is too deep, cut off the first element
+            dev.traces[metric].splice(0, 1);
+          }
+        })
       })
-    }, 2000);
+    }, 1000);
   }
 
   all() {
@@ -83,6 +104,21 @@ class Devices {
   updateDevice(ip, properties) {
     const device = find(this.devices, { ip });
     Object.assign(device, {...properties});
+  }
+
+  static getTopFive(devices, attr, cutoff = 5) {
+    const topDevices = sortBy(devices, attr);
+    topDevices.reverse();
+    topDevices.splice(cutoff);
+    return topDevices;
+  }
+
+  getTraces(attr) {
+    return this.traces[attr];
+  }
+
+  static getDeviceIndex(dev) {
+    return findIndex(this.devices, d => d.ip === dev.ip);
   }
 };
 
