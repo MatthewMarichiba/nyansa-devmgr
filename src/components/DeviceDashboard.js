@@ -17,33 +17,38 @@ class DeviceDashboard extends React.Component {
         super(props);
         this.devicesService = props.devicesService;
 
+        // Initialize traces to store history of metrics for each device
+        // Ex: { "156.23.4.1": { "cpuPct": [23, 43, 50, 49], "memBytes": [...], ... }
+        const tracesInit = {};
+        this.devicesService.all().forEach(dev => {
+            tracesInit[dev.ip] = {};
+            traceMetrics.forEach(metric => tracesInit[dev.ip][metric] = [0])
+        });
+
         this.state = {
             devices: this.devicesService.all(),
             selectedDevice: {},
-            traces: {} // { "156.23.4.1": { "cpuPct": [23, 43, 50, 49], "memBytes": [...], ... }
+            traces: tracesInit
         };
-
-        // Initialize metrics traces to store history of values
-        this.state.devices.forEach(dev => {
-            this.state.traces[dev.ip] = {};
-            traceMetrics.forEach(metric => this.state.traces[dev.ip][metric] = [0])
-        });
-
 
         // Poll for new device data periodically
         setInterval(() => {
             this.setState({ devices: props.devicesService.all() });
             // Push the latest device values into their traces.
-            this.state.devices.forEach(dev => {
-                // Store current device's metrics into traces arrays
-                traceMetrics.forEach(metric => {
-                    const devMetricTraces = this.state.traces[dev.ip][metric];
-                    devMetricTraces.push(dev[metric]); // Append the current value to the trace array
-                    if (devMetricTraces.length > traceDepth) { // If the array is too deep, cut off the first element
-                        devMetricTraces.splice(0, 1);
+            const tracesUpdate = {};
+            this.state.devices.forEach(dev => { // For each device...
+                tracesUpdate[dev.ip] = {};
+                traceMetrics.forEach(metric => { // For each metric...
+                    // const devMetricTraces = this.state.traces[dev.ip][metric];
+                    tracesUpdate[dev.ip][metric] = this.state.traces[dev.ip][metric].concat(dev[metric]);
+                    // devMetricTraces.push(dev[metric]); // Append the current value to the trace array
+                    if (tracesUpdate[dev.ip][metric].length > traceDepth) { // If trace depth outgrows the cutoff, drop the first element
+                        tracesUpdate[dev.ip][metric].splice(0, 1);
                     }
                 })
-            })
+            });
+            this.setState({ traces: tracesUpdate });
+            console.log(this.state);
 
         }, 1500);
 

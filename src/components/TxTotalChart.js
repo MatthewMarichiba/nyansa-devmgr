@@ -5,26 +5,23 @@ import Devices from '../resources/Devices';
 class TxTotalChart extends React.Component {
     constructor(props) {
         super(props);
-        // Put all props we're going to use onto `this`.
-        Object.assign(this, {
-            devices: props.devices,
-            traces: props.traces,
-            width: props.width
-        });
+        this.props = props;
     }
 
     render() {
-        const top5devices = Devices.getTopFive(this.devices, 'cpuPct');
-        const traceData = top5devices.map(dev => ({
-            y: this.traces[dev.ip]['networkTxBytes'],
-            type: 'bar',
-            name: dev.ip,
-        }));
-        console.log(traceData);
+        const top5devices = Devices.getTopFive(this.props.devices, 'cpuPct');
+        const traceData = top5devices.map(dev => {
+            const devTxTrace = this.props.traces[dev.ip]['networkTxBytes'];
+            return {
+                y: devTxTrace,
+                type: 'bar',
+                name: dev.ip,
+            };
+        });
 
         const layout = {
             title: 'Total TX Bandwidth',
-            width: this.width,
+            width: this.props.width,
             height: 300,
             barmode: 'stack',
             showlegend: false,
