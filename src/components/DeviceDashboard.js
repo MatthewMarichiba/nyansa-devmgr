@@ -1,9 +1,10 @@
 import React from 'react';
 import { find } from 'lodash';
 import Formatting from '../shared/Formatting';
-import HotDevicesPanel from "./HotDevicesPanel";
-import HealthChart from "./HealthChart";
-import CpuTraceChart from "./CpuTraceChart";
+import HotDevicesPanel from './HotDevicesPanel';
+import HealthChart from './HealthChart';
+import CpuTraceChart from './CpuTraceChart';
+import TxTotalChart from './TxTotalChart';
 import './DeviceDashboard.scss';
 
 const hotPanelCutoff = 5;
@@ -73,6 +74,11 @@ class DeviceDashboard extends React.Component {
         };
         return (
             <div className="DeviceDashboard">
+                <div className="row">
+                    <HealthChart devices={this.state.devices} width={380}></HealthChart>
+                    <CpuTraceChart devices={this.state.devices} width={380}></CpuTraceChart>
+                    <TxTotalChart devices={this.state.devices} width={380}></TxTotalChart>
+                </div>
                 <h4>Hot Devices</h4>
                 <div className="container">
                     <div className="row">
@@ -104,10 +110,6 @@ class DeviceDashboard extends React.Component {
                             attributeFormatter={Formatting.bytesToStr}
                             threshold={70 * 1024 * 1024 /* 70MB */}
                         ></HotDevicesPanel>
-                    </div>
-                    <div className="row">
-                        <HealthChart devices={this.state.devices}></HealthChart>
-                        <CpuTraceChart devices={this.state.devices}></CpuTraceChart>
                     </div>
                 </div>
                 <h4>All Devices</h4>

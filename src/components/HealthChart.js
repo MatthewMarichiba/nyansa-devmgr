@@ -8,6 +8,7 @@ class HealthChart extends React.Component {
         // Put all props we're going to use onto `this`.
         Object.assign(this, {
             devices: props.devices,
+            width: props.width
         });
     }
 
@@ -56,7 +57,7 @@ class HealthChart extends React.Component {
 
         const layout = {
             title: 'System Health (Tx/Rx)',
-            width: 300,
+            width: this.width,
             height: 300,
         };
 

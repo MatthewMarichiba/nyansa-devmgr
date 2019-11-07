@@ -1,9 +1,8 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
-import './HealthChart.scss';
 import Devices from '../resources/Devices';
 
-class CpuTraceChart extends React.Component {
+class TxTotalChart extends React.Component {
     constructor(props) {
         super(props);
         // Put all props we're going to use onto `this`.
@@ -16,16 +15,18 @@ class CpuTraceChart extends React.Component {
     render() {
         const top5devices = Devices.getTopFive(this.devices, 'cpuPct');
         const traceData = top5devices.map(dev => ({
-            y: dev.traces['cpuPct'],
-            type: 'line',
-            mode: 'lines',
+            y: dev.traces['networkTxBytes'],
+            type: 'bar',
             name: dev.ip,
         }));
+        console.log(traceData);
 
         const layout = {
-            title: 'CPU Utilization (%)',
+            title: 'Total TX Bandwidth',
             width: this.width,
             height: 300,
+            barmode: 'stack',
+            showlegend: false,
             xaxis: {
                 showgrid: false,
                 showline: false,
@@ -37,7 +38,8 @@ class CpuTraceChart extends React.Component {
             yaxis: {
                 showgrid: true,
                 showline: true,
-                range: [0, 100]
+                showticklabels: true,
+                autorange: true,
             },
         };
 
@@ -50,5 +52,5 @@ class CpuTraceChart extends React.Component {
     }
 }
 
-export default CpuTraceChart;
+export default TxTotalChart;
 

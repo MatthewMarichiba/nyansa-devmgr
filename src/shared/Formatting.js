@@ -1,7 +1,7 @@
 class Formatting {
   static bytesToStr(bytes, decimals = 0) {
     var sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-    if (bytes == 0)
+    if (bytes === 0)
       return '0';
 
     if (isNaN(parseFloat(bytes)) || !isFinite(bytes))
