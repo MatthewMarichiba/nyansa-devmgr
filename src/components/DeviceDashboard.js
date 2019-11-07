@@ -9,18 +9,42 @@ import './DeviceDashboard.scss';
 
 const hotPanelCutoff = 5;
 const panelColumns = 4;
+const traceDepth = 20;
+const traceMetrics = ['cpuPct', 'memBytes', 'networkTxBytes', 'networkRxBytes'];
 
 class DeviceDashboard extends React.Component {
     constructor(props) {
         super(props);
         this.devicesService = props.devicesService;
+
         this.state = {
             devices: this.devicesService.all(),
             selectedDevice: {},
+            traces: {} // { "156.23.4.1": { "cpuPct": [23, 43, 50, 49], "memBytes": [...], ... }
         };
+
+        // Initialize metrics traces to store history of values
+        this.state.devices.forEach(dev => {
+            this.state.traces[dev.ip] = {};
+            traceMetrics.forEach(metric => this.state.traces[dev.ip][metric] = [0])
+        });
+
+
         // Poll for new device data periodically
         setInterval(() => {
             this.setState({ devices: props.devicesService.all() });
+            // Push the latest device values into their traces.
+            this.state.devices.forEach(dev => {
+                // Store current device's metrics into traces arrays
+                traceMetrics.forEach(metric => {
+                    const devMetricTraces = this.state.traces[dev.ip][metric];
+                    devMetricTraces.push(dev[metric]); // Append the current value to the trace array
+                    if (devMetricTraces.length > traceDepth) { // If the array is too deep, cut off the first element
+                        devMetricTraces.splice(0, 1);
+                    }
+                })
+            })
+
         }, 1500);
 
         this.openChangeOwnerModal = this.openChangeOwnerModal.bind(this);
@@ -75,9 +99,9 @@ class DeviceDashboard extends React.Component {
         return (
             <div className="DeviceDashboard">
                 <div className="row">
-                    <HealthChart devices={this.state.devices} width={380}></HealthChart>
-                    <CpuTraceChart devices={this.state.devices} width={380}></CpuTraceChart>
-                    <TxTotalChart devices={this.state.devices} width={380}></TxTotalChart>
+                    <CpuTraceChart devices={this.state.devices} traces={this.state.traces} width={380}></CpuTraceChart>
+                    <TxTotalChart devices={this.state.devices} traces={this.state.traces} width={380}></TxTotalChart>
+                    <HealthChart devices={this.state.devices} traces={this.state.traces} width={380}></HealthChart>
                 </div>
                 <h4>Hot Devices</h4>
                 <div className="container">

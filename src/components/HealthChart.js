@@ -59,6 +59,10 @@ class HealthChart extends React.Component {
             title: 'System Health (Tx/Rx)',
             width: this.width,
             height: 300,
+            transition: {
+                duration: 500,
+                easing: 'cubic-in-out'
+            }
         };
 
         return (

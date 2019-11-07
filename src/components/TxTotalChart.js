@@ -8,6 +8,7 @@ class TxTotalChart extends React.Component {
         // Put all props we're going to use onto `this`.
         Object.assign(this, {
             devices: props.devices,
+            traces: props.traces,
             width: props.width
         });
     }
@@ -15,7 +16,7 @@ class TxTotalChart extends React.Component {
     render() {
         const top5devices = Devices.getTopFive(this.devices, 'cpuPct');
         const traceData = top5devices.map(dev => ({
-            y: dev.traces['networkTxBytes'],
+            y: this.traces[dev.ip]['networkTxBytes'],
             type: 'bar',
             name: dev.ip,
         }));

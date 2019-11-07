@@ -9,6 +9,7 @@ class CpuTraceChart extends React.Component {
         // Put all props we're going to use onto `this`.
         Object.assign(this, {
             devices: props.devices,
+            traces: props.traces,
             width: props.width
         });
     }
@@ -16,7 +17,7 @@ class CpuTraceChart extends React.Component {
     render() {
         const top5devices = Devices.getTopFive(this.devices, 'cpuPct');
         const traceData = top5devices.map(dev => ({
-            y: dev.traces['cpuPct'],
+            y: this.traces[dev.ip]['cpuPct'],
             type: 'line',
             mode: 'lines',
             name: dev.ip,
